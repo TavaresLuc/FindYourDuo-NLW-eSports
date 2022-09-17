@@ -1,10 +1,21 @@
+import { PrismaClient } from '@prisma/client'
 import express, { response } from 'express'
+import { convertHourStringToMinutes } from "./utils/convert-hour-string-to-minutes"
+import { convertMinutesToHourString } from './utils/convert-minutes-to-hour-string'
+import cors from 'cors'
 // foi adicionado a linha -- "type": "module" no package.json, está puxando o express de lá por isso.
-
 const app = express()
+app.use(express.json())
+app.use(cors({
+    // Origin: 'http://teste.com.br ( aqui se coloca qual dominio pode fazer alteração nesse back-end, 
+   // se não for preenchido, qualquer front-end pode fazer alteração no back.)
+}))
 
-// HTTP methods / API RESTful / HTTP CODES
-/* metódos: GET, POST, PUT, PATCH, DELETE 
+const  prisma = new PrismaClient({
+    log: ["query"],
+  });
+/* HTTP methods / API RESTful / HTTP CODES
+ metódos: GET, POST, PUT, PATCH, DELETE 
 
 Front buscando informação - get
 Post - criando algo
@@ -14,41 +25,88 @@ Delete - quando vai remover algo
 Pode usar qualquer método HTTP para fazer tudo isso, porém é boa prática e em APIRestful tem que ser feito certo.
 */
 
-app.get('/games', (request, response) => {
-    return response.json([]);
+app.get('/games', async(request, response) => {
+    // linkando o mpetodo a tabela game do bd, findMany para chamar todos os registros
+    const games = await prisma.game.findMany({
+    include: {
+        _count: {
+            select: {
+                ads: true,
+            }
+        }
+    }
+})
+
+    return response.json(games);
 });
 
-app.post('/ads', (request, response) => {
-    return response.status(201).json([]);
-});
+app.post("/games/:id/ads", async (request, response) => {
+    const gameId = request.params.id;
+    const body = request.body;
+  
+    const ad = await prisma.ad.create({
+        data: {
+          gameId,
+          name: body.name,
+          yearsPlaying: body.yearsPlaying,
+          discord: body.discord,
+          weekDays: body.weekDays.join(","),
+          hourStart: convertHourStringToMinutes(body.hourStart),
+          hourEnd: convertHourStringToMinutes(body.hourEnd),
+          useVoiceChannel: body.useVoiceChannel,
+        },
+      });
+  
+    return response.status(201).json(ad);
+  });
 
 // Endereço - www.site.com/ (o get puxa o /...)  - localhost:3333/ads
-app.get('/games/:id/ads', (request, response) => {
-    return response.json(
-        // const gameId = reques.params.id;
-        [
-        { id: 1,
-         name: 'Anúncio 1'
+app.get('/games/:id/ads', async (request, response) => {
+    const gameId = request.params.id;
+
+    const ads = await prisma.ad.findMany({
+        select: {
+            id: true,
+            name: true,
+            weekDays: true,
+            useVoiceChannel: true,
+            yearsPlaying: true,
+            hourStart: true,
+            hourEnd: true
+
         },
-        { id: 2,
-         name: 'Anúncio 2'
-        },
-        { id: 3,
-         name: 'Anúncio 3'
-        },
-        { id: 4,
-         name: 'Anúncio 4'
-        },
-    ]
-    )
+        where: {
+            gameId
+        } ,
+        orderBy: {
+            createdAt: 'desc'
+        }
+    })
+   
+    return response.json(ads.map(ad => {
+        return {
+            ...ad,
+            weekDays: ad.weekDays.split(','),
+            hourStart: convertMinutesToHourString(ad.hourStart),
+            hourEnd: convertMinutesToHourString(ad.hourEnd)
+        }
+    }))
 }) // essa função precisa ter uma resposta, se não fica carregando infinito.
 
-app.get('/ads/:id/discord', (request, response) => {
-    return response.json(
-        // const gameId = reques.params.id;
-        [
-        
-    ]
+
+app.get('/ads/:id/discord', async (request, response) => {
+    const adId = request.params.id;
+    const ad = await prisma.ad.findUniqueOrThrow({
+        select: {
+            discord:true
+        },
+        where: {
+            id: adId,
+        }
+    })
+    return response.json({
+        discord: ad.discord,
+    }
     )
 }) 
 

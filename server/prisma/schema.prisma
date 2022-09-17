@@ -20,7 +20,7 @@ model Game {
 }
 
 model Ad {
-  id              String @id
+  id              String @id @default(uuid())
   gameId          String
   name            String
   yearsPlaying    Int
