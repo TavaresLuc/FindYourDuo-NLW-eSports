@@ -4,6 +4,7 @@ import { convertHourStringToMinutes } from "./utils/convert-hour-string-to-minut
 import { convertMinutesToHourString } from './utils/convert-minutes-to-hour-string'
 import cors from 'cors'
 // foi adicionado a linha -- "type": "module" no package.json, está puxando o express de lá por isso.
+
 const app = express()
 app.use(express.json())
 app.use(cors({
