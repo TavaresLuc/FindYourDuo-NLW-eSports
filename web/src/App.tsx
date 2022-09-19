@@ -3,6 +3,7 @@ import './styles/main.css';
 import logoImg from './assets/nlwesports.svg';
 import { GameBanner } from './components/GameBanner';
 import { CreateAdBanner } from './components/CreateAdBanner';
+import * as Dialog from '@radix-ui/react-dialog'
 
 interface Game {
   id: string;
@@ -44,7 +45,10 @@ function App() {
         })}
         
       </div>
-      <CreateAdBanner />
+
+      <Dialog.Root>
+        <CreateAdBanner />
+      </Dialog.Root>  
       
     </div>
   )

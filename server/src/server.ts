@@ -8,7 +8,7 @@ const app = express()
 app.use(express.json())
 app.use(cors({
     // Origin: 'http://teste.com.br ( aqui se coloca qual dominio pode fazer alteração nesse back-end, 
-   // se não for preenchido, qualquer front-end pode fazer alteração no back.)
+   // se não for preenchido, qualquer local de front-end pode fazer alteração no back.)
 }))
 
 const  prisma = new PrismaClient({
