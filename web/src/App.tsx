@@ -4,6 +4,9 @@ import logoImg from './assets/nlwesports.svg';
 import { GameBanner } from './components/GameBanner';
 import { CreateAdBanner } from './components/CreateAdBanner';
 import * as Dialog from '@radix-ui/react-dialog'
+import { GameController } from 'phosphor-react';
+import { Input } from './components/Form/Input'
+import {Button} from './components/Form/Button'
 
 interface Game {
   id: string;
@@ -56,42 +59,70 @@ function App() {
 
             <Dialog.Title className="text-3xl font-black"> Publique um anúncio</Dialog.Title>
 
-            <Dialog.Content>
-              <form>
-                <div>
-                  <label htmlFor=''>Qual o game?</label>
-                  <input id="game" placeholder="Selecione o game que deseja jogar" />
+              <form className="mt-8 flex flex-col gap-4">
+                <div className='flex flex-col gap-2'>
+                  <label htmlFor='' className="font-semibold">Qual o game?</label>
+                  <Input type="text" id="game" placeholder="Selecione o game que deseja jogar"/>
                 </div>
 
-                <div>
-                  <label htmlFor=''>Seu nome ou nickname</label>
-                  <input placeholder="Como te chamam dentro do game?" />
+                <div className='flex flex-col gap-2'>
+                  <label htmlFor='name'>Seu nome ou nickname</label>
+                  <Input type="text" id="name" placeholder="Como te chamam dentro do game?"/>
                 </div>
 
-                <div>
-                  <div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div  className='flex flex-col gap-2'>
                     <label htmlFor="yearsPlaying">Joga há quantos anos?</label>
-                    <input id="yearsPlaying" type="number" placeholder="Tudo bem ser ZERO" />
+                    <Input type="number" id="yearsPlaying" placeholder="Tudo bem ser ZERO"/>
                   </div>
 
-                  <div>
+                  <div className='flex flex-col gap-2'>
                     <label htmlFor="discord">Qual seu discord?</label>
-                    <input id="discord" type="text" placeholder='Usuário#0000' />
+                    <Input type="text" id="discord" placeholder="Usuário#0000"/>
                   </div>
+                </div>
 
-                  <div>
-                      <div>
+                  <div className="flex gap-6">
+                      <div className="flex flex-col gap-2">
                         <label htmlFor="weekDays">Quando costuma jogar?</label> 
+
+                        <div className="flex">
+                          <button className="w-8 h-8 rounded-sm bg-zinc-900" >D</button>
+                          <button className="w-8 h-8 rounded-sm bg-zinc-900"  title="Segunda">S</button>
+                          <button className="w-8 h-8 rounded-sm bg-zinc-900"  title="Terça">T</button>
+                          <button className="w-8 h-8 rounded-sm bg-zinc-900"  title="Quarta">Q</button>
+                          <button className="w-8 h-8 rounded-sm bg-zinc-900"  title="Quinta">Q</button>
+                          <button className="w-8 h-8 rounded-sm bg-zinc-900"  title="Sexta">S</button>
+                          <button className="w-8 h-8 rounded-sm bg-zinc-900"  title="Sábado">S</button>
+                        </div>
+                        
                       </div>
+                      <div className="flex flex-col gap-2 flex-1">  
                     <label htmlFor="hourStart">Qual horário do dia?</label>
-                    <div>
-                      <input id="hourStart" type="time" placeholder="De" />
-                      <input id="hourEnd" type="time" placeholder="Até" />
+                      <div className="grid grid-cols-2 gap-2">
+                      <Input id="hourStart" type="time" placeholder="De"/>
+                      <Input id="hourEnd" type="time" placeholder="Até" />
+                      </div>
                     </div>
                   </div>
+                
+
+                <div className="mt-2 flex gap-2 text-sm text-white">
+                  <input type="checkbox" />
+                  Costumo me conectar ao chat de voz
                 </div>
+
+                <footer className="mt-4 flex justify-end gap-4">
+                 <Dialog.Close className="bg-zinc-500 rounded-md px-5 h-12 gap-4 hover:bg-zinc-600" type="submit">
+                  Cancelar
+                 </Dialog.Close > 
+
+                  <button className="bg-violet-500 rounded-md px-5 h-12 gap-3 flex items-center hover:bg-violet-600" type="submit">
+                    <GameController className="w-6 h-6"/>
+                    Encontre seu Duo
+                  </button>
+                </footer>
               </form>
-            </Dialog.Content>
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>  
