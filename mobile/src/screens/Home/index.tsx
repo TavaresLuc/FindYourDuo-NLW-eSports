@@ -8,6 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Background from '../../components/Background';
 import {useNavigation} from '@react-navigation/native';
 
+
+
 export function Home() {
 
   const [games, setGames] = useState<GameCardProps[]>([]);
@@ -17,8 +19,9 @@ export function Home() {
   function handleOpenGame({ id, title, bannerUrl }: GameCardProps)  {
     navigation.navigate('game', { id, title, bannerUrl });
   }
+
   useEffect(() => {
-    fetch('http://192.168.0.8:3333/games')
+    fetch(`http://192.168.0.8:3333/games/`)
     .then((response) => response.json())
     .then(data => setGames(data))
   }, []);
