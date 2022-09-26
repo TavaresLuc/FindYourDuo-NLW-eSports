@@ -11,11 +11,13 @@ import { Text, TouchableOpacity } from "react-native";
 import { Heading } from "../../components/Heading";
 import { DuoCard, DuoCardProps } from "../../components/DuoCard";
 import { FlatList } from "react-native";
-
+import { DuoMatch } from "../../components/DuoMatch"; 
 
 
 export function Game() 
   {
+
+    const [discordDuoSelected, setDiscordDuoSelected] = useState('');
 
     const [duos, setDuos] = useState<DuoCardProps[]>([]);
     
@@ -26,6 +28,14 @@ export function Game()
 
     function handleGoBack(){
       navigation.goBack();
+    }
+
+    async function getDiscordUser(adsId: string) {
+      useEffect(() => {
+        fetch(`http://192.168.0.8:3333/games/${adsId}/ads`)
+        .then((response) => response.json())
+        .then(data => setDiscordDuoSelected(data.discord));
+      }, []);
     }
 
     useEffect(() => {
@@ -58,7 +68,7 @@ export function Game()
         keyExtractor={item => item.id} 
         renderItem={({item}) => (
 
-        <DuoCard data={item} onConnect={() => { }}/>
+        <DuoCard data={item} onConnect={() => getDiscordUser(item.id)}/>
         )}
         horizontal
         style={styles.containerList}
@@ -70,6 +80,11 @@ export function Game()
           </Text>
         )}
         />
+
+        <DuoMatch 
+        visible={discordDuoSelected.length > 0}
+        discord="Tavares#2342"
+        onClose={() => setDiscordDuoSelected('')}/>
       </SafeAreaView>
       </Background> 
     );
